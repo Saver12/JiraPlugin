@@ -22,4 +22,6 @@
     <description key="issue-crud.description">The Issue CRUD Plugin</description>
     <url-pattern>/issuecrud</url-pattern>
   </servlet>
+  <!--<component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer" filter=""/>
+  <component-import key="userManager" interface="com.atlassian.sal.api.user.UserManager" filter=""/>-->
 </atlassian-plugin>
