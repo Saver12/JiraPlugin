@@ -1,6 +1,10 @@
 package com.example.plugins.tutorial.crud.servlet;
 
-import com.atlassian.crowd.embedded.api.User;
+import com.atlassian.jira.bc.issue.IssueService;
+import com.atlassian.jira.bc.issue.search.SearchService;
+import com.atlassian.jira.bc.project.ProjectService;
+import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.IssueInputParameters;
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.search.SearchException;
@@ -8,28 +12,21 @@ import com.atlassian.jira.jql.builder.JqlClauseBuilder;
 import com.atlassian.jira.jql.builder.JqlQueryBuilder;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.user.ApplicationUser;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import com.atlassian.jira.web.bean.PagerFilter;
+import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
+import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
+import com.atlassian.templaterenderer.TemplateRenderer;
+import com.google.common.collect.Maps;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.atlassian.jira.bc.issue.IssueService;
-import com.atlassian.jira.bc.issue.search.SearchService;
-import com.atlassian.jira.bc.project.ProjectService;
-import com.atlassian.jira.issue.Issue;
-import com.atlassian.jira.web.bean.PagerFilter;
-import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
-import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
-import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.templaterenderer.TemplateRenderer;
-import com.google.common.collect.Maps;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Scanned
 public class IssueCRUD extends HttpServlet{
@@ -43,14 +40,14 @@ public class IssueCRUD extends HttpServlet{
     @ComponentImport
     private SearchService searchService;
 
-    @ComponentImport
-    private UserManager userManager;
+//    @ComponentImport
+//    private UserManager userManager;
 
     @ComponentImport
     private TemplateRenderer templateRenderer;
 
 //    @ComponentImport
-    private com.atlassian.jira.user.util.UserManager jiraUserManager;
+//    private com.atlassian.jira.user.util.UserManager jiraUserManager;
 
     private static final String LIST_BROWSER_TEMPLATE = "/templates/list.vm";
     private static final String NEW_BROWSER_TEMPLATE = "/templates/new.vm";
@@ -58,15 +55,15 @@ public class IssueCRUD extends HttpServlet{
 
     @Inject
     public IssueCRUD(IssueService issueService, ProjectService projectService,
-                     SearchService searchService, UserManager userManager,
-                     com.atlassian.jira.user.util.UserManager jiraUserManager,
+                     SearchService searchService,/* UserManager userManager,
+                     com.atlassian.jira.user.util.UserManager jiraUserManager,*/
                      TemplateRenderer templateRenderer) {
         this.issueService = issueService;
         this.projectService = projectService;
         this.searchService = searchService;
-        this.userManager = userManager;
+//        this.userManager = userManager;
         this.templateRenderer = templateRenderer;
-        this.jiraUserManager = jiraUserManager;
+//        this.jiraUserManager = jiraUserManager;
     }
 
 //    private static final Logger log = LoggerFactory.getLogger(IssueCRUD.class);
@@ -98,7 +95,8 @@ public class IssueCRUD extends HttpServlet{
         } else {
             // Render the list of issues (list.vm) if no params are passed in
             List<Issue> issues = getIssues(req);
-            Map<String, Object> context = Maps.newHashMap();
+//            Map<String, Object> context = Maps.newHashMap();
+            Map<String, Object> context = new HashMap<>();
             context.put("issues", issues);
             resp.setContentType("text/html;charset=utf-8");
             // Pass in the list of issues as the context
@@ -111,7 +109,9 @@ public class IssueCRUD extends HttpServlet{
         // To get the current user, we first get the username from the session.
         // Then we pass that over to the jiraUserManager in order to get an
         // actual User object.
-        return jiraUserManager.getUser(userManager.getRemoteUsername(req));
+
+//        return jiraUserManager.getUser(userManager.getRemoteUsername(req));
+        return ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
     }
 
     private List<Issue> getIssues(HttpServletRequest req) {
