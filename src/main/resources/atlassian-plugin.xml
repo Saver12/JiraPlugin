@@ -24,4 +24,9 @@
   </servlet>
   <!--<component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer" filter=""/>
   <component-import key="userManager" interface="com.atlassian.sal.api.user.UserManager" filter=""/>-->
+  <web-item name="Summary" i18n-name-key="google-home.name" key="google-home" section="system.top.navigation.bar" weight="1000">
+    <description key="google-home.description">Summary Link</description>
+    <label key="google-home.label"/>
+    <link linkId="google-home-link">/plugins/servlet/issuecrud</link>
+  </web-item>
 </atlassian-plugin>
