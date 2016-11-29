@@ -84,6 +84,8 @@
             <input type="hidden" name="new" value="y">
             <input type="submit" class="button" value="Create new issue">
         </form>
+        <br><br>
+        Yep
     </div>
 </div>
 </body>

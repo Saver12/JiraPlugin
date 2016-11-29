@@ -16,6 +16,8 @@ import com.atlassian.jira.web.bean.PagerFilter;
 import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.templaterenderer.TemplateRenderer;
+import com.example.plugins.tutorial.crud.manager.StatusReportManager;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -45,6 +47,9 @@ public class IssueCRUD extends HttpServlet {
     @ComponentImport
     private TemplateRenderer templateRenderer;
 
+    @Autowired
+    private StatusReportManager statusReportManager;
+
     private static final String LIST_BROWSER_TEMPLATE = "/templates/list.vm";
     private static final String NEW_BROWSER_TEMPLATE = "/templates/new.vm";
     private static final String EDIT_BROWSER_TEMPLATE = "/templates/edit.vm";
@@ -53,12 +58,14 @@ public class IssueCRUD extends HttpServlet {
     public IssueCRUD(IssueService issueService, ProjectService projectService,
                      SearchService searchService,
                      JiraAuthenticationContext jiraAuthenticationContext,
-                     TemplateRenderer templateRenderer) {
+                     TemplateRenderer templateRenderer,
+                     StatusReportManager statusReportManager) {
         this.issueService = issueService;
         this.projectService = projectService;
         this.searchService = searchService;
         this.jiraAuthenticationContext = jiraAuthenticationContext;
         this.templateRenderer = templateRenderer;
+        this.statusReportManager = statusReportManager;
     }
 
     @Override
@@ -88,6 +95,7 @@ public class IssueCRUD extends HttpServlet {
             // Render the list of issues (list.vm) if no params are passed in
             List<Issue> issues = getIssues();
             Map<String, Object> context = new HashMap<>();
+            System.out.println("Project Name - " + statusReportManager.getProjectName());
             context.put("issues", issues);
             resp.setContentType("text/html;charset=utf-8");
             // Pass in the list of issues as the context
