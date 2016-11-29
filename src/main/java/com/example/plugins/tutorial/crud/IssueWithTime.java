@@ -31,10 +31,6 @@ public class IssueWithTime {
     }
 
     public String getTimeInCurrentStatus(String format) {
-        if (timeInCurrentStatus == -1) {
-            return "-";
-        } else {
             return DurationFormatUtils.formatDuration(timeInCurrentStatus, format);
-        }
     }
 }

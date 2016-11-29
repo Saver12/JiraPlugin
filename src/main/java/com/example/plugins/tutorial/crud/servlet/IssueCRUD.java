@@ -116,8 +116,10 @@ public class IssueCRUD extends HttpServlet {
                     issueWithTimes.add(new IssueWithTime(issue, -1, timeInCurrentStatus));
                 } else if (size == 1) {
                     endTime = statuses.get(size - 1).getCreated().getTime();
+                    startTime = issue.getCreated().getTime();
+                    timeInPreviousStatus = endTime - startTime;
                     timeInCurrentStatus = Calendar.getInstance().getTimeInMillis() - endTime;
-                    issueWithTimes.add(new IssueWithTime(issue, -1, timeInCurrentStatus));
+                    issueWithTimes.add(new IssueWithTime(issue, timeInPreviousStatus, timeInCurrentStatus));
                 } else {
                     startTime = statuses.get(size - 2).getCreated().getTime();
                     endTime = statuses.get(size - 1).getCreated().getTime();
