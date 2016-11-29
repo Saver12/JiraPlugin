@@ -18,7 +18,7 @@
         <resource type="download" name="tutorial-jira-simple-issue-crud.js"
                   location="/js/tutorial-jira-simple-issue-crud.js"/>
         <resource type="download" name="images/" location="/images"/>
-        <!--<context>tutorial-jira-simple-issue-crud</context>-->
+        <context>tutorial-jira-simple-issue-crud</context>
     </web-resource>
     <servlet name="Issue CRUD" i18n-name-key="issue-crud.name" key="issue-crud"
              class="com.example.plugins.tutorial.crud.servlet.IssueCRUD">
