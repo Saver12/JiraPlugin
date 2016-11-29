@@ -11,14 +11,14 @@
     <!-- add our i18n resource -->
     <resource type="i18n" name="i18n" location="tutorial-jira-simple-issue-crud"/>
     <!-- add our web resources -->
-    <web-resource key="tutorial-jira-simple-issue-crud-resources" name="tutorial-jira-simple-issue-crud Web Resources">
+    <web-resource key="reportResources" name="Status Time Report Web Resources">
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <resource type="download" name="tutorial-jira-simple-issue-crud.css"
                   location="/css/tutorial-jira-simple-issue-crud.css"/>
         <resource type="download" name="tutorial-jira-simple-issue-crud.js"
                   location="/js/tutorial-jira-simple-issue-crud.js"/>
         <resource type="download" name="images/" location="/images"/>
-        <context>tutorial-jira-simple-issue-crud</context>
+        <!--<context>tutorial-jira-simple-issue-crud</context>-->
     </web-resource>
     <servlet name="Issue CRUD" i18n-name-key="issue-crud.name" key="issue-crud"
              class="com.example.plugins.tutorial.crud.servlet.IssueCRUD">
@@ -38,14 +38,14 @@
     <web-item key="statusTimeReportSettings" name="Status Time Report Settings"
               section="admin_plugins_menu/statusTimeReportSection" weight="100">
         <label>Status Time Report Settings</label>
-        <link>/secure/admin/plugins/report/StatusTimeReportAction!default.jspa</link>
+        <link>/secure/admin/plugins/crud/TimeReportAction!default.jspa</link>
     </web-item>
 
     <webwork1 key="statusTimeReportActions" name="Status Time Report Actions">
         <actions>
-            <action name="epam.jira.pptx.action.PPTXBuilderWebActionSupport" alias="PPTXBuilderAction">
-                <view name="success">/templates/builder-configuration.vm</view>
-                <view name="error">/templates/builder-configuration.vm</view>
+            <action name="com.example.plugins.tutorial.crud.action.TimeReportWebActionSupport" alias="TimeReportAction">
+                <view name="success">/templates/settings-configuration.vm</view>
+                <view name="error">/templates/settings-configuration.vm</view>
                 <view name="permissionviolation">/secure/views/permissionviolation.jsp</view>
             </action>
         </actions>

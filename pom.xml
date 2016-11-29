@@ -6,13 +6,13 @@
          http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.example.plugins.tutorial</groupId>
-    <artifactId>tutorial-jira-simple-issue-crud</artifactId>
+    <artifactId>crud</artifactId>
     <version>1.0-SNAPSHOT</version>
     <organization>
         <name>Example Company</name>
         <url>http://www.example.com/</url>
     </organization>
-    <name>tutorial-jira-simple-issue-crud</name>
+    <name>crud</name>
     <description>This plugin demonstrates how to perform basic CRUD operations on JIRA Issues using the IssueService and SearchService interface through a servlet module.</description>
     <packaging>atlassian-plugin</packaging>
     <dependencies>

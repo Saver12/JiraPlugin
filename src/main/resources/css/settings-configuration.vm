@@ -1,0 +1,33 @@
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>Status Time Report Settings</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="pragma" content="no-cache"/>
+    <meta http-equiv="expires" content="-1"/>
+    <meta name="decorator" content="atl.admin"/>
+    <meta name="admin.active.section" content="admin_plugins_menu/statusTimeReportSection"/>
+    <meta name="admin.active.tab" content="statusTimeReportSettings"/>
+    $webResourceManager.requireResource("com.atlassian.auiplugin:ajs")
+    $webResourceManager.requireResource("com.example.plugins.tutorial.crud:reportResources")
+</head>
+
+<body>
+<h2>PPTX Template Builder Settings</h2>
+<p>Please provide plugin settings.</p>
+<div id="pptxBuilderSettings" style="display: block;">
+    <form name="jiraform" id="jiraform" class="aui" method="post" action="$!req.contextPath/secure/admin/plugins/builder/PPTXBuilderSettingsAction.jspa">
+        <div class="field-group" id="options">
+            Number of days to previous RAG status:
+            <input type="text" name="days" id="days" class="textfield" autocomplete="off" value="$!{days}"></input><br><br>
+            Name of project to attach plugin to:
+            <input type="text" name="enabledInProject" id="enabledInProject" class="textfield" autocomplete="off" value="$!{projectName}"></input><br><br>
+        </div>
+        <div class="buttons-container">
+            <div class="buttons">
+                <input id="save" name="save" type="submit" class="button" value="Save" accesskey="S"/>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>
