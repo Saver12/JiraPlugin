@@ -3,7 +3,6 @@ package com.example.plugins.tutorial.crud.servlet;
 import com.atlassian.jira.bc.issue.IssueService;
 import com.atlassian.jira.bc.issue.search.SearchService;
 import com.atlassian.jira.bc.project.ProjectService;
-import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.IssueInputParameters;
 import com.atlassian.jira.issue.MutableIssue;
@@ -11,12 +10,12 @@ import com.atlassian.jira.issue.search.SearchException;
 import com.atlassian.jira.jql.builder.JqlClauseBuilder;
 import com.atlassian.jira.jql.builder.JqlQueryBuilder;
 import com.atlassian.jira.project.Project;
+import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.web.bean.PagerFilter;
 import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.templaterenderer.TemplateRenderer;
-import com.google.common.collect.Maps;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -29,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 @Scanned
-public class IssueCRUD extends HttpServlet{
+public class IssueCRUD extends HttpServlet {
 
     @ComponentImport
     private IssueService issueService;
@@ -40,14 +39,11 @@ public class IssueCRUD extends HttpServlet{
     @ComponentImport
     private SearchService searchService;
 
-//    @ComponentImport
-//    private UserManager userManager;
+    @ComponentImport
+    private JiraAuthenticationContext jiraAuthenticationContext;
 
     @ComponentImport
     private TemplateRenderer templateRenderer;
-
-//    @ComponentImport
-//    private com.atlassian.jira.user.util.UserManager jiraUserManager;
 
     private static final String LIST_BROWSER_TEMPLATE = "/templates/list.vm";
     private static final String NEW_BROWSER_TEMPLATE = "/templates/new.vm";
@@ -55,27 +51,23 @@ public class IssueCRUD extends HttpServlet{
 
     @Inject
     public IssueCRUD(IssueService issueService, ProjectService projectService,
-                     SearchService searchService,/* UserManager userManager,
-                     com.atlassian.jira.user.util.UserManager jiraUserManager,*/
+                     SearchService searchService,
+                     JiraAuthenticationContext jiraAuthenticationContext,
                      TemplateRenderer templateRenderer) {
         this.issueService = issueService;
         this.projectService = projectService;
         this.searchService = searchService;
-//        this.userManager = userManager;
+        this.jiraAuthenticationContext = jiraAuthenticationContext;
         this.templateRenderer = templateRenderer;
-//        this.jiraUserManager = jiraUserManager;
     }
 
-//    private static final Logger log = LoggerFactory.getLogger(IssueCRUD.class);
-
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
-    {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if ("y".equals(req.getParameter("new"))) {
             // Renders new.vm template if the "new" parameter is passed
 
             // Create an empty context map to pass into the render method
-            Map<String, Object> context = Maps.newHashMap();
+            Map<String, Object> context = new HashMap<>();
             // Make sure to set the contentType otherwise bad things happen
             resp.setContentType("text/html;charset=utf-8");
             // Render the velocity template (new.vm). Since the new.vm template
@@ -85,17 +77,16 @@ public class IssueCRUD extends HttpServlet{
             // Renders edit.vm template if the "edit" parameter is passed
 
             // Retrieve issue with the specified key
-            IssueService.IssueResult issue = issueService.getIssue(getCurrentUser(req),
+            IssueService.IssueResult issue = issueService.getIssue(getCurrentUser(),
                     req.getParameter("key"));
-            Map<String, Object> context = Maps.newHashMap();
+            Map<String, Object> context = new HashMap<>();
             context.put("issue", issue.getIssue());
             resp.setContentType("text/html;charset=utf-8");
             // Render the template with the issue inside the context
             templateRenderer.render(EDIT_BROWSER_TEMPLATE, context, resp.getWriter());
         } else {
             // Render the list of issues (list.vm) if no params are passed in
-            List<Issue> issues = getIssues(req);
-//            Map<String, Object> context = Maps.newHashMap();
+            List<Issue> issues = getIssues();
             Map<String, Object> context = new HashMap<>();
             context.put("issues", issues);
             resp.setContentType("text/html;charset=utf-8");
@@ -105,18 +96,13 @@ public class IssueCRUD extends HttpServlet{
     }
 
     //Returns ApplicationUser instead of com.atlassian.crowd.embedded.api.User
-    private ApplicationUser getCurrentUser(HttpServletRequest req) {
-        // To get the current user, we first get the username from the session.
-        // Then we pass that over to the jiraUserManager in order to get an
-        // actual User object.
-
-//        return jiraUserManager.getUser(userManager.getRemoteUsername(req));
-        return ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
+    private ApplicationUser getCurrentUser() {
+        return jiraAuthenticationContext.getLoggedInUser();
     }
 
-    private List<Issue> getIssues(HttpServletRequest req) {
+    private List<Issue> getIssues() {
         // User is required to carry out a search
-        ApplicationUser user = getCurrentUser(req);
+        ApplicationUser user = getCurrentUser();
 
         // search issues
 
@@ -140,9 +126,8 @@ public class IssueCRUD extends HttpServlet{
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Map params = req.getParameterMap();
 
-        ApplicationUser user = getCurrentUser(req);
+        ApplicationUser user = getCurrentUser();
 
         if ("y".equals(req.getParameter("edit"))) {
             // Perform update if the "edit" param is passed in
@@ -158,7 +143,7 @@ public class IssueCRUD extends HttpServlet{
 
             if (result.getErrorCollection().hasAnyErrors()) {
                 // If the validation fails, we re-render the edit page with the errors in the context
-                Map<String, Object> context = Maps.newHashMap();
+                Map<String, Object> context = new HashMap<>();
                 context.put("issue", issue);
                 context.put("errors", result.getErrorCollection().getErrors());
                 resp.setContentType("text/html;charset=utf-8");
@@ -186,14 +171,14 @@ public class IssueCRUD extends HttpServlet{
             Project project = projectService.getProjectByKey(user, "TUTORIAL").getProject();
             issueInputParameters.setProjectId(project.getId());
             // We also hard-code the issueType to be a "bug" == 1
-            issueInputParameters.setIssueTypeId("1");
+            issueInputParameters.setIssueTypeId("10000");
             // Perform the validation
             IssueService.CreateValidationResult result = issueService.validateCreate(user, issueInputParameters);
 
             if (result.getErrorCollection().hasAnyErrors()) {
                 // If the validation fails, render the list of issues with the error in a flash message
-                List<Issue> issues = getIssues(req);
-                Map<String, Object> context = Maps.newHashMap();
+                List<Issue> issues = getIssues();
+                Map<String, Object> context = new HashMap<>();
                 context.put("issues", issues);
                 context.put("errors", result.getErrorCollection().getErrors());
                 resp.setContentType("text/html;charset=utf-8");
@@ -208,9 +193,9 @@ public class IssueCRUD extends HttpServlet{
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        ApplicationUser user = getCurrentUser(req);
+        ApplicationUser user = getCurrentUser();
         // This will be the output string that we will put the JSON in
-        String respStr = "";
+        String respStr;
         // Retrieve the issue with the specified key
         IssueService.IssueResult issue = issueService.getIssue(user, req.getParameter("key"));
         if (issue.isValid()) {
