@@ -1,32 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}" plugins-version="2">
-  <plugin-info>
-    <description>${project.description}</description>
-    <version>${project.version}</version>
-    <vendor name="${project.organization.name}" url="${project.organization.url}"/>
-    <param name="plugin-icon">images/pluginIcon.png</param>
-    <param name="plugin-logo">images/pluginLogo.png</param>
-  </plugin-info>
-  <!-- add our i18n resource -->
-  <resource type="i18n" name="i18n" location="tutorial-jira-simple-issue-crud"/>
-  <!-- add our web resources -->
-  <web-resource key="tutorial-jira-simple-issue-crud-resources" name="tutorial-jira-simple-issue-crud Web Resources">
-    <dependency>com.atlassian.auiplugin:ajs</dependency>
-    <resource type="download" name="tutorial-jira-simple-issue-crud.css" location="/css/tutorial-jira-simple-issue-crud.css"/>
-    <resource type="download" name="tutorial-jira-simple-issue-crud.js" location="/js/tutorial-jira-simple-issue-crud.js"/>
-    <resource type="download" name="images/" location="/images"/>
-    <context>tutorial-jira-simple-issue-crud</context>
-  </web-resource>
-  <servlet name="Issue CRUD" i18n-name-key="issue-crud.name" key="issue-crud" class="com.example.plugins.tutorial.crud.servlet.IssueCRUD">
-    <description key="issue-crud.description">The Issue CRUD Plugin</description>
-    <url-pattern>/issuecrud</url-pattern>
-  </servlet>
-  <!--<component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer" filter=""/>
-  <component-import key="userManager" interface="com.atlassian.sal.api.user.UserManager" filter=""/>-->
-  <web-item name="Summary" i18n-name-key="google-home.name" key="google-home" section="system.top.navigation.bar" weight="1000">
-    <description key="google-home.description">Summary Link</description>
-    <label key="google-home.label"/>
-    <link linkId="google-home-link">/plugins/servlet/issuecrud</link>
-  </web-item>
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${project.version}</version>
+        <vendor name="${project.organization.name}" url="${project.organization.url}"/>
+        <param name="plugin-icon">images/pluginIcon.png</param>
+        <param name="plugin-logo">images/pluginLogo.png</param>
+    </plugin-info>
+    <!-- add our i18n resource -->
+    <resource type="i18n" name="i18n" location="tutorial-jira-simple-issue-crud"/>
+    <!-- add our web resources -->
+    <web-resource key="tutorial-jira-simple-issue-crud-resources" name="tutorial-jira-simple-issue-crud Web Resources">
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <resource type="download" name="tutorial-jira-simple-issue-crud.css"
+                  location="/css/tutorial-jira-simple-issue-crud.css"/>
+        <resource type="download" name="tutorial-jira-simple-issue-crud.js"
+                  location="/js/tutorial-jira-simple-issue-crud.js"/>
+        <resource type="download" name="images/" location="/images"/>
+        <context>tutorial-jira-simple-issue-crud</context>
+    </web-resource>
+    <servlet name="Issue CRUD" i18n-name-key="issue-crud.name" key="issue-crud"
+             class="com.example.plugins.tutorial.crud.servlet.IssueCRUD">
+        <description key="issue-crud.description">The Issue CRUD Plugin</description>
+        <url-pattern>/issuecrud</url-pattern>
+    </servlet>
+    <servlet name="Issue Search" i18n-name-key="issue-search.name" key="issue-search"
+             class="com.example.plugins.tutorial.crud.servlet.IssueSearch">
+        <description key="issue-search.description">The Issue Search Plugin</description>
+        <url-pattern>/issuesearch</url-pattern>
+    </servlet>
+    <servlet name="Search" i18n-name-key="search.name" key="search"
+             class="com.example.plugins.tutorial.crud.servlet.Search">
+        <description key="search.description">The Search Plugin</description>
+        <url-pattern>/search</url-pattern>
+    </servlet>
+    <!--<component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer" filter=""/>
+    <component-import key="userManager" interface="com.atlassian.sal.api.user.UserManager" filter=""/>-->
+    <web-item name="Summary" i18n-name-key="google-home.name" key="google-home" section="system.top.navigation.bar"
+              weight="1000">
+        <description key="google-home.description">Summary Link</description>
+        <label key="google-home.label"/>
+        <link linkId="google-home-link">/plugins/servlet/issuecrud</link>
+    </web-item>
 </atlassian-plugin>
