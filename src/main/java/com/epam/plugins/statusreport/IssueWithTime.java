@@ -1,4 +1,4 @@
-package com.example.plugins.tutorial.crud;
+package com.epam.plugins.statusreport;
 
 import com.atlassian.jira.issue.Issue;
 import org.apache.commons.lang.time.DurationFormatUtils;

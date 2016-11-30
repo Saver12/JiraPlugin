@@ -1,4 +1,4 @@
-package com.example.plugins.tutorial.crud.api;
+package com.epam.plugins.statusreport.api;
 
 public interface MyPluginComponent
 {

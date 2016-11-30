@@ -195,8 +195,8 @@
         </plugins>
     </build>
     <properties>
-        <jira.version>7.1.9</jira.version>
-        <amps.version>6.2.4</amps.version>
+        <jira.version>7.2.5</jira.version>
+        <amps.version>6.2.6</amps.version>
         <plugin.testrunner.version>1.2.3</plugin.testrunner.version>
         <atlassian.spring.scanner.version>1.2.6</atlassian.spring.scanner.version>
         <!-- This key is used to keep the consistency between the key in atlassian-plugin.xml and the key to generate bundle. -->

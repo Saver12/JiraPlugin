@@ -16,7 +16,7 @@
         <resource type="download" name="crud.js" location="/js/crud.js"/>
     </web-resource>
     <servlet name="StatusTimeServlet" i18n-name-key="issue-crud.name" key="issue-crud"
-             class="com.example.plugins.tutorial.crud.servlet.IssueCRUD">
+             class="com.epam.plugins.statusreport.servlet.IssueCRUD">
         <description key="issue-crud.description">Status Time Report Plugin</description>
         <url-pattern>/timereport</url-pattern>
     </servlet>
@@ -38,14 +38,12 @@
 
     <webwork1 key="statusTimeReportActions" name="Status Time Report Actions">
         <actions>
-            <action name="com.example.plugins.tutorial.crud.action.TimeReportWebActionSupport" alias="TimeReportAction">
+            <action name="com.epam.plugins.statusreport.action.TimeReportWebActionSupport" alias="TimeReportAction">
                 <view name="success">/templates/settings-configuration.vm</view>
                 <view name="error">/templates/settings-configuration.vm</view>
                 <view name="permissionviolation">/secure/views/permissionviolation.jsp</view>
             </action>
         </actions>
     </webwork1>
-
-
 
 </atlassian-plugin>

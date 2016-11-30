@@ -1,9 +1,8 @@
-package com.example.plugins.tutorial.crud.action;
+package com.epam.plugins.statusreport.action;
 
 import com.atlassian.jira.permission.GlobalPermissionKey;
 import com.atlassian.jira.web.action.JiraWebActionSupport;
-import com.example.plugins.tutorial.crud.manager.StatusReportManager;
-//import epam.jira.pptx.manager.StatusReportManager;
+import com.epam.plugins.statusreport.manager.StatusReportManager;
 
 public abstract class DefaultSupport extends JiraWebActionSupport {
 

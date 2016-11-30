@@ -1,4 +1,4 @@
-package com.example.plugins.tutorial.crud.manager;
+package com.epam.plugins.statusreport.manager;
 
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
@@ -6,6 +6,7 @@ import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -39,12 +40,14 @@ public class StatusReportManager {
         if (obj != null) {
             return obj.toString();
         }
-        return null;
+        return "";
     }
 
     public List<String> getIssueFields() {
         PluginSettings pluginSettings = getPluginsSettings();
         //noinspection unchecked
-        return (List<String>) pluginSettings.get(ISSUE_FIELDS_KEY);
+        List<String> strings = (List<String>) pluginSettings.get(ISSUE_FIELDS_KEY);
+
+        return strings == null ? new ArrayList<>() : strings;
     }
 }

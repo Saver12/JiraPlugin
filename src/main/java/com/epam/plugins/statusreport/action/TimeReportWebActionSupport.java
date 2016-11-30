@@ -1,6 +1,6 @@
-package com.example.plugins.tutorial.crud.action;
+package com.epam.plugins.statusreport.action;
 
-import com.example.plugins.tutorial.crud.manager.StatusReportManager;
+import com.epam.plugins.statusreport.manager.StatusReportManager;
 
 import java.util.*;
 
@@ -19,28 +19,15 @@ public class TimeReportWebActionSupport extends DefaultSupport {
             return PERMISSION_VIOLATION;
         }
 
-//        Integer days = null;
         String projectName = null;
         String[] issueFields = getHttpRequest().getParameterValues(FIELDS_PARAM_NAME);
 
-//        HashSet<String> strings = issueFields != null ? Sets.newHashSet(issueFields) : new HashSet<>();
-
         List<String> strings1 = issueFields != null ? Arrays.asList(issueFields) : new ArrayList<>();
-        System.out.println(strings1);
-//        if (issueFields)
 
-        System.out.println(Arrays.toString(issueFields));
         Enumeration<String> parameterNames = getHttpRequest().getParameterNames();
         while (parameterNames.hasMoreElements()) {
             String parameterName = parameterNames.nextElement();
-            /*if (parameterName.equals(DAYS_PARAM_NAME)) {
-                try {
-                    days = Integer.valueOf(getHttpRequest().getParameter(parameterName));
-                    System.out.println(days);
-                } catch (Throwable t) {
-                    t.printStackTrace();
-                }
-            } else*/ if (parameterName.equals(PROJECT_PARAM_NAME)) {
+            if (parameterName.equals(PROJECT_PARAM_NAME)) {
                 projectName = getHttpRequest().getParameter(parameterName);
                 System.out.println(projectName);
             }
@@ -49,5 +36,9 @@ public class TimeReportWebActionSupport extends DefaultSupport {
         statusReportManager.updateTemplateBuilderSettings(projectName, strings1);
 
         return SUCCESS;
+    }
+
+    public String getProjectName() {
+        return statusReportManager.getProjectName();
     }
 }
