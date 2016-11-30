@@ -1,8 +1,8 @@
-package com.epam.plugins.statusreport.action;
+package com.epam.plugins.action;
 
 import com.atlassian.jira.permission.GlobalPermissionKey;
 import com.atlassian.jira.web.action.JiraWebActionSupport;
-import com.epam.plugins.statusreport.manager.StatusReportManager;
+import com.epam.plugins.manager.StatusReportManager;
 
 public abstract class DefaultSupport extends JiraWebActionSupport {
 

@@ -1,4 +1,4 @@
-package com.epam.plugins.statusreport.api;
+package com.epam.plugins.api;
 
 public interface MyPluginComponent
 {

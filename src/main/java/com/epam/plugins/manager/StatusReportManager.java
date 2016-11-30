@@ -1,4 +1,4 @@
-package com.epam.plugins.statusreport.manager;
+package com.epam.plugins.manager;
 
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;

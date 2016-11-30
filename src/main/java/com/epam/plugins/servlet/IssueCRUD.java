@@ -1,4 +1,4 @@
-package com.epam.plugins.statusreport.servlet;
+package com.epam.plugins.servlet;
 
 import com.atlassian.jira.bc.issue.search.SearchService;
 import com.atlassian.jira.issue.Issue;
@@ -13,8 +13,8 @@ import com.atlassian.jira.web.bean.PagerFilter;
 import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.templaterenderer.TemplateRenderer;
-import com.epam.plugins.statusreport.IssueWithTime;
-import com.epam.plugins.statusreport.manager.StatusReportManager;
+import com.epam.plugins.IssueWithTime;
+import com.epam.plugins.manager.StatusReportManager;
 import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 

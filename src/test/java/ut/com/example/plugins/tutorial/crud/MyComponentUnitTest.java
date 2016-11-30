@@ -1,8 +1,8 @@
 package ut.com.example.plugins.tutorial.crud;
 
 import org.junit.Test;
-import com.epam.plugins.statusreport.api.MyPluginComponent;
-import com.epam.plugins.statusreport.impl.MyPluginComponentImpl;
+import com.epam.plugins.api.MyPluginComponent;
+import com.epam.plugins.impl.MyPluginComponentImpl;
 
 import static org.junit.Assert.assertEquals;
 

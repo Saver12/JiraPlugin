@@ -1,4 +1,4 @@
-package com.epam.plugins.statusreport;
+package com.epam.plugins;
 
 import com.atlassian.jira.issue.Issue;
 import org.apache.commons.lang.time.DurationFormatUtils;

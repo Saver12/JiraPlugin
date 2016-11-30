@@ -5,15 +5,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
          http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.example.plugins.tutorial</groupId>
-    <artifactId>crud</artifactId>
+    <groupId>com.epam.plugins</groupId>
+    <artifactId>statusreport</artifactId>
     <version>1.0-SNAPSHOT</version>
     <organization>
-        <name>Example Company</name>
-        <url>http://www.example.com/</url>
+        <name>EPAM</name>
+        <url>http://www.epam.com/</url>
     </organization>
-    <name>crud</name>
-    <description>This plugin demonstrates how to perform basic CRUD operations on JIRA Issues using the IssueService and SearchService interface through a servlet module.</description>
+    <name>statusreport</name>
+    <description>This plugin creates Status Time Report.</description>
     <packaging>atlassian-plugin</packaging>
     <dependencies>
         <dependency>
@@ -22,8 +22,6 @@
             <version>${jira.version}</version>
             <scope>provided</scope>
         </dependency>
-        <!-- Add dependency on jira-core if you want access to JIRA implementation classes as well as the sanctioned API. -->
-        <!-- This is not normally recommended, but may be required eg when migrating a plugin originally developed against JIRA 4.x -->
         <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>jira-core</artifactId>
@@ -38,10 +36,6 @@
                     <groupId>xml-apis</groupId>
                     <artifactId>xml-apis</artifactId>
                 </exclusion>
-                <!--<exclusion>
-                    <groupId>jndi</groupId>
-                    <artifactId>jndi</artifactId>
-                </exclusion>-->
             </exclusions>
         </dependency>
         <dependency>
@@ -68,7 +62,6 @@
             <version>1</version>
             <scope>provided</scope>
         </dependency>
-        <!-- WIRED TEST RUNNER DEPENDENCIES -->
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-osgi-testrunner</artifactId>
@@ -86,16 +79,6 @@
             <artifactId>gson</artifactId>
             <version>2.2.2-atlassian-1</version>
         </dependency>
-        <!-- Uncomment to use TestKit in your project. Details at https://bitbucket.org/atlassian/jira-testkit -->
-        <!-- You can read more about TestKit at https://developer.atlassian.com/display/JIRADEV/Plugin+Tutorial+-+Smarter+integration+testing+with+TestKit -->
-        <!--
-		<dependency>
-			<groupId>com.atlassian.jira.tests</groupId>
-			<artifactId>jira-testkit-client</artifactId>
-			<version>${testkit.version}</version>
-			<scope>test</scope>
-		</dependency>
-		-->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
@@ -145,27 +128,15 @@
                 <configuration>
                     <productVersion>${jira.version}</productVersion>
                     <productDataVersion>${jira.version}</productDataVersion>
-                    <!-- Uncomment to install TestKit backdoor in JIRA. -->
-                    <!--
-					<pluginArtifacts>
-						<pluginArtifact>
-							<groupId>com.atlassian.jira.tests</groupId>
-							<artifactId>jira-testkit-plugin</artifactId>
-							<version>${testkit.version}</version>
-						</pluginArtifact>
-					</pluginArtifacts>
-					-->
                     <enableQuickReload>true</enableQuickReload>
                     <enableFastdev>false</enableFastdev>
-                    <!-- See here for an explanation of default instructions: -->
-                    <!-- https://developer.atlassian.com/docs/advanced-topics/configuration-of-instructions-in-atlassian-plugins -->
                     <instructions>
                         <Atlassian-Plugin-Key>${atlassian.plugin.key}</Atlassian-Plugin-Key>
-                        <!-- Add package to export here -->
+
                         <Export-Package>com.example.plugins.tutorial.crud.api,</Export-Package>
-                        <!-- Add package import here -->
+
                         <Import-Package>org.springframework.osgi.*;resolution:="optional", org.eclipse.gemini.blueprint.*;resolution:="optional", *</Import-Package>
-                        <!-- Ensure plugin is spring powered -->
+
                         <Spring-Context>*</Spring-Context>
                     </instructions>
                 </configuration>
@@ -199,9 +170,9 @@
         <amps.version>6.2.6</amps.version>
         <plugin.testrunner.version>1.2.3</plugin.testrunner.version>
         <atlassian.spring.scanner.version>1.2.6</atlassian.spring.scanner.version>
-        <!-- This key is used to keep the consistency between the key in atlassian-plugin.xml and the key to generate bundle. -->
+
         <atlassian.plugin.key>${project.groupId}.${project.artifactId}</atlassian.plugin.key>
-        <!-- TestKit version 6.x for JIRA 6.x -->
+
         <testkit.version>6.3.11</testkit.version>
     </properties>
 

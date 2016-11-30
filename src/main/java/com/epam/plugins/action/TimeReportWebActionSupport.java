@@ -1,6 +1,6 @@
-package com.epam.plugins.statusreport.action;
+package com.epam.plugins.action;
 
-import com.epam.plugins.statusreport.manager.StatusReportManager;
+import com.epam.plugins.manager.StatusReportManager;
 
 import java.util.*;
 

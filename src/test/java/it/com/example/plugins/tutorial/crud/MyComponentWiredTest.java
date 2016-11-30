@@ -3,7 +3,7 @@ package it.com.example.plugins.tutorial.crud;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-import com.epam.plugins.statusreport.api.MyPluginComponent;
+import com.epam.plugins.api.MyPluginComponent;
 import com.atlassian.sal.api.ApplicationProperties;
 
 import static org.junit.Assert.assertEquals;
