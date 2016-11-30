@@ -96,7 +96,9 @@ public class IssueCRUD extends HttpServlet {
             List<Issue> issues = getIssues();
             Map<String, Object> context = new HashMap<>();
             System.out.println("Project Name - " + statusReportManager.getProjectName());
+
             context.put("issues", issues);
+            context.put("prname", statusReportManager.getProjectName());
             resp.setContentType("text/html;charset=utf-8");
             // Pass in the list of issues as the context
             templateRenderer.render(LIST_BROWSER_TEMPLATE, context, resp.getWriter());

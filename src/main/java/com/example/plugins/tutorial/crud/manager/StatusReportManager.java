@@ -15,8 +15,8 @@ import java.util.TreeMap;
 @Component
 public class StatusReportManager {
     private final static String PLUGIN_SETTINGS_KEY = "tutorial.crud:plugin.settings";
-    private final static String DAYS_KEY = "days";
-    private final static String PROJECT_NAME_KEY = "projectName";
+    private final static String DAYS_KEY = "com.example.plugins.tutorial.builder.days";
+    private final static String PROJECT_NAME_KEY = "pptx.builder.name";
 
     private PluginSettingsFactory pluginSettingsFactory;
 //    private final XStream xStream;
@@ -31,7 +31,7 @@ public class StatusReportManager {
 
 
     private PluginSettings getPluginsSettings() {
-        return pluginSettingsFactory.createSettingsForKey(PLUGIN_SETTINGS_KEY);
+        return pluginSettingsFactory.createGlobalSettings();
     }
 
     public void updateTemplateBuilderSettings(final Integer days, final String projectName) {
