@@ -1,33 +1,14 @@
 <html>
 <head>
-    <title>All Tutorial Issues &mdash; Issue CRUD Tutorial</title>
+    <title>Status Time Report Page</title>
     <meta name="decorator" content="atl.general">
-    <script>
-        AJS.$(document).ready(function() {
-            jQuery('.delete-issue').click(function() {
-                console.log('deleting');
-                var self = jQuery(this);
-                jQuery.ajax({
-                    type: "delete",
-                    url: "issuecrud?key=" + self.data("key"),
-                    success: function(data) {
-                        console.log('dom', self, data);
-                        self.parent().parent().remove();
-                    },
-                    error: function() {
-                        console.log('error', arguments);
-                    }
-                });
-                return false;
-            });
-        });
-    </script>
 </head>
 <body class="page-type-admin">
 <div class="content-container">
 
     <div class="content-body">
-        <h1>You've Got #if($issues.size()==0)<span style="color:red">NO</span>#end Issues!</h1>
+
+        <h1>#if($issues.size()==0)You have no Issues or Project doesn't exist.#end</h1>
 
         #if ($errors.size()>0)
             <div class="aui-message error shadowed">
@@ -46,11 +27,21 @@
                 <table class="aui">
                     <thead>
                     <tr>
-                        <th>Key</th>
-                        <th>Summary</th>
-                        <th>Description</th>
-                        <th>Status</th>
-                        <th>Reporter</th>
+                        #if ($issueFields.contains("Key"))
+                            <th>Key</th>
+                        #end
+                        #if ($issueFields.contains("Summary"))
+                            <th>Summary</th>
+                        #end
+                        #if ($issueFields.contains("Description"))
+                            <th>Description</th>
+                        #end
+                        #if ($issueFields.contains("Status"))
+                            <th>Status</th>
+                        #end
+                        #if ($issueFields.contains("Reporter"))
+                            <th>Reporter</th>
+                        #end
                         <th>Time in previous status</th>
                         <th>Time in current status</th>
                         <th></th>
@@ -59,28 +50,34 @@
                     <tbody>
                         #foreach( $issue in $issues )
                         <tr>
-                            <td>$issue.getIssue().getKey()</td>
-                            <td>$issue.getIssue().getSummary()</td>
-                            <td>
-                            #if($issue.getIssue().getDescription())
-                                $issue.getIssue().getDescription()
+                            #if ($issueFields.contains("Key"))
+                                <td>$issue.getIssue().getKey()</td>
                             #end
-                            </td>
-                            <td>
-                                $issue.getIssue().getStatus().getSimpleStatus().getName()
-                            </td>
-                            <td>
-                                $issue.getIssue().getReporter().getName()
-                            </td>
+                            #if ($issueFields.contains("Summary"))
+                                <td>$issue.getIssue().getSummary()</td>
+                            #end
+                            #if ($issueFields.contains("Description"))
+                                <td>
+                                    #if($issue.getIssue().getDescription())
+                                        $issue.getIssue().getDescription()
+                                    #end
+                                </td>
+                            #end
+                            #if ($issueFields.contains("Status"))
+                                <td>
+                                    $issue.getIssue().getStatus().getSimpleStatus().getName()
+                                </td>
+                            #end
+                            #if ($issueFields.contains("Reporter"))
+                                <td>
+                                    $issue.getIssue().getReporter().getName()
+                                </td>
+                            #end
                             <td>
                                 $issue.getTimeInPreviousStatus("dd' days 'HH:mm")
                             </td>
                             <td>
                                 $issue.getTimeInCurrentStatus("dd' days 'HH:mm")
-                            </td>
-                            <td>
-                                <a href="issuecrud?edit=y&key=$issue.getIssue().getKey()">Edit</a> &nbsp;
-                                <a href="#" class="delete-issue" data-key="$issue.getIssue().getKey()">Delete</a>
                             </td>
                         </tr>
                         #end
@@ -88,12 +85,6 @@
                 </table>
             </div>
         #end
-        <form method="get" action="issuecrud" class="aui">
-            <input type="hidden" name="new" value="y">
-            <input type="submit" class="button" value="Create new issue">
-        </form>
-        <br><br>
-        $prname
     </div>
 </div>
 </body>

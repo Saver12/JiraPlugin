@@ -3,30 +3,21 @@ package com.example.plugins.tutorial.crud.manager;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
-import com.thoughtworks.xstream.XStream;
-//import epam.jira.pptx.generator.TemplateBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.TreeMap;
+import java.util.List;
 
 @Component
 public class StatusReportManager {
-    private final static String PLUGIN_SETTINGS_KEY = "tutorial.crud:plugin.settings";
-    private final static String DAYS_KEY = "com.example.plugins.tutorial.builder.days";
-    private final static String PROJECT_NAME_KEY = "pptx.builder.name";
 
+    private final static String PROJECT_NAME_KEY = "com.example.plugins.tutorial.crud.projectName";
+    private final static String ISSUE_FIELDS_KEY = "com.example.plugins.tutorial.crud.fields";
     private PluginSettingsFactory pluginSettingsFactory;
-//    private final XStream xStream;
 
     @Autowired
     public StatusReportManager(@ComponentImport final PluginSettingsFactory pluginSettingsFactory) {
         this.pluginSettingsFactory = pluginSettingsFactory;
-
-//        xStream = new XStream();
-//        xStream.setClassLoader(StatusReportManager.class.getClassLoader());
     }
 
 
@@ -34,25 +25,12 @@ public class StatusReportManager {
         return pluginSettingsFactory.createGlobalSettings();
     }
 
-    public void updateTemplateBuilderSettings(final Integer days, final String projectName) {
-        getPluginsSettings().remove(DAYS_KEY);
-
-        getPluginsSettings().put(DAYS_KEY, days != null ? days.toString() : null);
-        System.out.println(getPluginsSettings().get(DAYS_KEY) + " - days");
-
+    public void updateTemplateBuilderSettings(final String projectName, final List<String> issueFields) {
         getPluginsSettings().remove(PROJECT_NAME_KEY);
-
         getPluginsSettings().put(PROJECT_NAME_KEY, projectName);
-        System.out.println(getPluginsSettings().get(PROJECT_NAME_KEY) + " - name");
-    }
 
-    public Integer getDays() {
-        PluginSettings pluginSettings = getPluginsSettings();
-        Object obj = pluginSettings.get(DAYS_KEY);
-        if (obj != null) {
-            return Integer.valueOf(obj.toString());
-        }
-        return null;
+        getPluginsSettings().remove(ISSUE_FIELDS_KEY);
+        getPluginsSettings().put(ISSUE_FIELDS_KEY, issueFields);
     }
 
     public String getProjectName() {
@@ -62,5 +40,11 @@ public class StatusReportManager {
             return obj.toString();
         }
         return null;
+    }
+
+    public List<String> getIssueFields() {
+        PluginSettings pluginSettings = getPluginsSettings();
+        //noinspection unchecked
+        return (List<String>) pluginSettings.get(ISSUE_FIELDS_KEY);
     }
 }

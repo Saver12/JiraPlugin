@@ -15,18 +15,18 @@
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <resource type="download" name="crud.js" location="/js/crud.js"/>
     </web-resource>
-    <servlet name="Issue CRUD" i18n-name-key="issue-crud.name" key="issue-crud"
+    <servlet name="StatusTimeServlet" i18n-name-key="issue-crud.name" key="issue-crud"
              class="com.example.plugins.tutorial.crud.servlet.IssueCRUD">
-        <description key="issue-crud.description">The Issue CRUD Plugin</description>
-        <url-pattern>/issuecrud</url-pattern>
+        <description key="issue-crud.description">Status Time Report Plugin</description>
+        <url-pattern>/timereport</url-pattern>
     </servlet>
+
     <web-item name="Summary" i18n-name-key="google-home.name" key="google-home" section="system.top.navigation.bar"
               weight="1000">
         <description key="google-home.description">Summary Link</description>
         <label key="google-home.label"/>
-        <link linkId="google-home-link">/plugins/servlet/issuecrud</link>
+        <link linkId="google-home-link">/plugins/servlet/timereport</link>
     </web-item>
-
     <web-section key="statusTimeReportSection" name="Status Time Report" location="admin_plugins_menu">
         <label>Status Time Report</label>
     </web-section>
@@ -45,5 +45,7 @@
             </action>
         </actions>
     </webwork1>
+
+
 
 </atlassian-plugin>

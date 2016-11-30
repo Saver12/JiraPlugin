@@ -12,15 +12,19 @@
 </head>
 
 <body>
-<h2>PPTX Template Builder Settings</h2>
-<p>Please provide plugin settings.</p>
+<h2>Status Time Report Settings</h2>
+<p>Please provide plugin settings.</p><br>
 <div id="pptxBuilderSettings" style="display: block;">
     <form name="jiraform" id="jiraform" class="aui" method="post" action="$!req.contextPath/secure/admin/plugins/crud/TimeReportAction.jspa">
         <div class="field-group" id="options">
-            Number of days to previous RAG status:
-            <input type="text" name="days" id="days" class="textfield" autocomplete="off" value="$!{pptx.builder.days}"></input><br><br>
-            Name of project to attach plugin to:
+            Name of project:
             <input type="text" name="enabledInProject" id="enabledInProject" class="textfield" autocomplete="off" value="$!{projectName}"></input><br><br>
+            Required Issue Fields:<br>
+            <input type="checkbox" name="fields" value="Key">Key<br>
+            <input type="checkbox" name="fields" value="Summary">Summary<br>
+            <input type="checkbox" name="fields" value="Description">Description<br>
+            <input type="checkbox" name="fields" value="Status">Status<br>
+            <input type="checkbox" name="fields" value="Reporter">Reporter<br>
         </div>
         <div class="buttons-container">
             <div class="buttons">

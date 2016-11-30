@@ -22,6 +22,7 @@ import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.example.plugins.tutorial.crud.IssueWithTime;
 import com.example.plugins.tutorial.crud.manager.StatusReportManager;
+import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.inject.Inject;
@@ -70,8 +71,7 @@ public class IssueCRUD extends HttpServlet {
                      SearchService searchService,
                      JiraAuthenticationContext jiraAuthenticationContext,
                      TemplateRenderer templateRenderer,
-                     StatusReportManager statusReportManager) {
-                     TemplateRenderer templateRenderer,
+                     StatusReportManager statusReportManager,
                      ChangeHistoryManager changeHistoryManager) {
         this.issueService = issueService;
         this.projectService = projectService;
@@ -142,7 +142,10 @@ public class IssueCRUD extends HttpServlet {
             System.out.println("Project Name - " + statusReportManager.getProjectName());
 
             context.put("issues", issues);
-            context.put("prname", statusReportManager.getProjectName());
+//            context.put("prname", statusReportManager.getProjectName());
+            List<String> issueFields = statusReportManager.getIssueFields();
+
+            context.put("issueFields", Sets.newHashSet(issueFields));
             context.put("issues", issueWithTimes);
             resp.setContentType("text/html;charset=utf-8");
             // Pass in the list of issues as the context
@@ -165,7 +168,7 @@ public class IssueCRUD extends HttpServlet {
         // The search interface requires JQL clause... so let's build one
         JqlClauseBuilder jqlClauseBuilder = JqlQueryBuilder.newClauseBuilder();
         // Our JQL clause is simple project="TUTORIAL"
-        com.atlassian.query.Query query = jqlClauseBuilder.project("TUTORIAL").buildQuery();
+        com.atlassian.query.Query query = jqlClauseBuilder.project(statusReportManager.getProjectName()).buildQuery();
         // A page filter is used to provide pagination. Let's use an unlimited filter to
         // to bypass pagination.
         PagerFilter pagerFilter = PagerFilter.getUnlimitedFilter();
