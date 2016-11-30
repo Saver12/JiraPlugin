@@ -49,30 +49,38 @@
                         <th>Key</th>
                         <th>Summary</th>
                         <th>Description</th>
-                        <th>Assignee</th>
+                        <th>Status</th>
                         <th>Reporter</th>
+                        <th>Time in previous status</th>
+                        <th>Time in current status</th>
                         <th></th>
                     </tr>
                     </thead>
                     <tbody>
                         #foreach( $issue in $issues )
                         <tr>
-                            <td>$issue.getKey()</td>
-                            <td>$issue.getSummary()</td>
+                            <td>$issue.getIssue().getKey()</td>
+                            <td>$issue.getIssue().getSummary()</td>
                             <td>
-                                #if($issue.getDescription())
-                            $issue.getDescription()
-                        #end
+                            #if($issue.getIssue().getDescription())
+                                $issue.getIssue().getDescription()
+                            #end
                             </td>
                             <td>
-                                $issue.getAssignee().getName()
+                                $issue.getIssue().getStatus().getSimpleStatus().getName()
                             </td>
                             <td>
-                                $issue.getReporter().getName()
+                                $issue.getIssue().getReporter().getName()
                             </td>
                             <td>
-                                <a href="issuecrud?edit=y&key=$issue.getKey()">Edit</a> &nbsp;
-                                <a href="#" class="delete-issue" data-key="$issue.getKey()">Delete</a>
+                                $issue.getTimeInPreviousStatus("dd' days 'HH:mm")
+                            </td>
+                            <td>
+                                $issue.getTimeInCurrentStatus("dd' days 'HH:mm")
+                            </td>
+                            <td>
+                                <a href="issuecrud?edit=y&key=$issue.getIssue().getKey()">Edit</a> &nbsp;
+                                <a href="#" class="delete-issue" data-key="$issue.getIssue().getKey()">Delete</a>
                             </td>
                         </tr>
                         #end

@@ -6,6 +6,10 @@ import com.atlassian.jira.bc.project.ProjectService;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.IssueInputParameters;
 import com.atlassian.jira.issue.MutableIssue;
+import com.atlassian.jira.issue.changehistory.ChangeHistory;
+import com.atlassian.jira.issue.changehistory.ChangeHistoryItem;
+import com.atlassian.jira.issue.changehistory.ChangeHistoryManager;
+import com.atlassian.jira.issue.history.ChangeItemBean;
 import com.atlassian.jira.issue.search.SearchException;
 import com.atlassian.jira.jql.builder.JqlClauseBuilder;
 import com.atlassian.jira.jql.builder.JqlQueryBuilder;
@@ -16,6 +20,7 @@ import com.atlassian.jira.web.bean.PagerFilter;
 import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.templaterenderer.TemplateRenderer;
+import com.example.plugins.tutorial.crud.IssueWithTime;
 import com.example.plugins.tutorial.crud.manager.StatusReportManager;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,9 +30,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalAmount;
+import java.time.temporal.TemporalField;
+import java.time.temporal.TemporalUnit;
+import java.util.*;
 
 @Scanned
 public class IssueCRUD extends HttpServlet {
@@ -50,6 +58,9 @@ public class IssueCRUD extends HttpServlet {
     @Autowired
     private StatusReportManager statusReportManager;
 
+    @ComponentImport
+    private ChangeHistoryManager changeHistoryManager;
+
     private static final String LIST_BROWSER_TEMPLATE = "/templates/list.vm";
     private static final String NEW_BROWSER_TEMPLATE = "/templates/new.vm";
     private static final String EDIT_BROWSER_TEMPLATE = "/templates/edit.vm";
@@ -60,16 +71,21 @@ public class IssueCRUD extends HttpServlet {
                      JiraAuthenticationContext jiraAuthenticationContext,
                      TemplateRenderer templateRenderer,
                      StatusReportManager statusReportManager) {
+                     TemplateRenderer templateRenderer,
+                     ChangeHistoryManager changeHistoryManager) {
         this.issueService = issueService;
         this.projectService = projectService;
         this.searchService = searchService;
         this.jiraAuthenticationContext = jiraAuthenticationContext;
         this.templateRenderer = templateRenderer;
+        this.changeHistoryManager = changeHistoryManager;
         this.statusReportManager = statusReportManager;
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+
         if ("y".equals(req.getParameter("new"))) {
             // Renders new.vm template if the "new" parameter is passed
 
@@ -94,14 +110,44 @@ public class IssueCRUD extends HttpServlet {
         } else {
             // Render the list of issues (list.vm) if no params are passed in
             List<Issue> issues = getIssues();
+            List<IssueWithTime> issueWithTimes = new ArrayList<>();
+
+            for (Issue issue : issues) {
+                List<ChangeItemBean> statuses = changeHistoryManager.getChangeItemsForField(issue, "status");
+                long startTime;
+                long endTime;
+                long timeInCurrentStatus;
+                long timeInPreviousStatus;
+                int size = statuses.size();
+                if (statuses.isEmpty()) {
+                    timeInCurrentStatus = Calendar.getInstance().getTimeInMillis() - issue.getCreated().getTime();
+                    issueWithTimes.add(new IssueWithTime(issue, -1, timeInCurrentStatus));
+                } else if (size == 1) {
+                    endTime = statuses.get(size - 1).getCreated().getTime();
+                    startTime = issue.getCreated().getTime();
+                    timeInPreviousStatus = endTime - startTime;
+                    timeInCurrentStatus = Calendar.getInstance().getTimeInMillis() - endTime;
+                    issueWithTimes.add(new IssueWithTime(issue, timeInPreviousStatus, timeInCurrentStatus));
+                } else {
+                    startTime = statuses.get(size - 2).getCreated().getTime();
+                    endTime = statuses.get(size - 1).getCreated().getTime();
+                    timeInPreviousStatus = endTime - startTime;
+                    timeInCurrentStatus = Calendar.getInstance().getTimeInMillis() - endTime;
+
+                    issueWithTimes.add(new IssueWithTime(issue, timeInPreviousStatus, timeInCurrentStatus));
+                }
+            }
+
             Map<String, Object> context = new HashMap<>();
             System.out.println("Project Name - " + statusReportManager.getProjectName());
 
             context.put("issues", issues);
             context.put("prname", statusReportManager.getProjectName());
+            context.put("issues", issueWithTimes);
             resp.setContentType("text/html;charset=utf-8");
             // Pass in the list of issues as the context
             templateRenderer.render(LIST_BROWSER_TEMPLATE, context, resp.getWriter());
+
         }
     }
 

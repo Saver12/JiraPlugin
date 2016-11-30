@@ -1,0 +1,18 @@
+<html>
+<head>
+    <title>Search</title>
+    <meta name="decorator" content="atl.general">
+</head>
+<body class="page-type-admin">
+<div class="content-container">
+
+
+    <form method="get" action="issuesearch">
+    <input type="text" name="query" id="query" size="40" value="">
+    <input type="submit" value="Search">
+    <input type="hidden" name="search" value="1">
+    </form>
+
+</div>
+</body>
+</html>
