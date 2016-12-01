@@ -27,9 +27,7 @@
                 <table class="aui">
                     <thead>
                     <tr>
-                        #if ($issueFields.contains("Key"))
-                            <th>Key</th>
-                        #end
+                        <th>Key</th>
                         #if ($issueFields.contains("Summary"))
                             <th>Summary</th>
                         #end
@@ -50,9 +48,8 @@
                     <tbody>
                         #foreach( $issue in $issues )
                         <tr>
-                            #if ($issueFields.contains("Key"))
-                                <td>$issue.getIssue().getKey()</td>
-                            #end
+
+                            <td><a href="/jira/browse/$issue.getIssue().getKey()">$issue.getIssue().getKey()</a></td>
                             #if ($issueFields.contains("Summary"))
                                 <td>$issue.getIssue().getSummary()</td>
                             #end
@@ -84,6 +81,12 @@
                     </tbody>
                 </table>
             </div>
+            #set ($a = $issues.get(0).getCustomFields())
+            #set ($issue = $issues.get(0))
+            $issue.getCustomFieldsValues()<br>
+##            $issues.get(0).getIssue()
+##           Field Name - $a.get(0).getFieldName(), Value - $a.get(0).getValue($issues.get(0).getIssue())
+           Field Name - $a.get(0).getFieldName(), Value - $a.get(0).getValue($issue)
         #end
     </div>
 </div>

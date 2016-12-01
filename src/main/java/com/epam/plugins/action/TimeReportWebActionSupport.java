@@ -29,7 +29,6 @@ public class TimeReportWebActionSupport extends DefaultSupport {
             String parameterName = parameterNames.nextElement();
             if (parameterName.equals(PROJECT_PARAM_NAME)) {
                 projectName = getHttpRequest().getParameter(parameterName);
-                System.out.println(projectName);
             }
         }
 

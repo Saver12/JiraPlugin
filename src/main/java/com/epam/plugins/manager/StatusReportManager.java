@@ -1,5 +1,7 @@
 package com.epam.plugins.manager;
 
+import com.atlassian.jira.issue.CustomFieldManager;
+import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class StatusReportManager {
@@ -15,10 +18,13 @@ public class StatusReportManager {
     private final static String PROJECT_NAME_KEY = "com.example.plugins.tutorial.crud.projectName";
     private final static String ISSUE_FIELDS_KEY = "com.example.plugins.tutorial.crud.fields";
     private PluginSettingsFactory pluginSettingsFactory;
+    private CustomFieldManager customFieldManager;
 
     @Autowired
-    public StatusReportManager(@ComponentImport final PluginSettingsFactory pluginSettingsFactory) {
+    public StatusReportManager(@ComponentImport final PluginSettingsFactory pluginSettingsFactory,
+                               @ComponentImport final CustomFieldManager customFieldManager) {
         this.pluginSettingsFactory = pluginSettingsFactory;
+        this.customFieldManager = customFieldManager;
     }
 
 
@@ -41,6 +47,13 @@ public class StatusReportManager {
             return obj.toString();
         }
         return "";
+    }
+
+    public List<String> getCustomFieldsNames() {
+        /*return customFieldManager.getCustomFieldObjects().stream()
+                .map(CustomField::getFieldName)
+                .collect(Collectors.toList());*/
+        return new ArrayList<>();
     }
 
     public List<String> getIssueFields() {

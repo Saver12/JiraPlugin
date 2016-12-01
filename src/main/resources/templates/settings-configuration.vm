@@ -20,7 +20,6 @@
             Name of project:
             <input type="text" name="enabledInProject" id="enabledInProject" class="textfield" autocomplete="off" value="$!{projectName}"></input><br><br>
             Required Issue Fields:<br>
-            <input type="checkbox" name="fields" value="Key">Key<br>
             <input type="checkbox" name="fields" value="Summary">Summary<br>
             <input type="checkbox" name="fields" value="Description">Description<br>
             <input type="checkbox" name="fields" value="Status">Status<br>

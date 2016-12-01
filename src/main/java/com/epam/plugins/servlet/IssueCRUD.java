@@ -1,8 +1,12 @@
 package com.epam.plugins.servlet;
 
 import com.atlassian.jira.bc.issue.search.SearchService;
+import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.changehistory.ChangeHistoryManager;
+import com.atlassian.jira.issue.fields.CustomField;
+import com.atlassian.jira.issue.fields.FieldManager;
 import com.atlassian.jira.issue.history.ChangeItemBean;
 import com.atlassian.jira.issue.search.SearchException;
 import com.atlassian.jira.jql.builder.JqlClauseBuilder;
@@ -25,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Scanned
 public class IssueCRUD extends HttpServlet {
@@ -64,8 +69,27 @@ public class IssueCRUD extends HttpServlet {
 
         List<Issue> issues = getIssues();
         List<IssueWithTime> issueWithTimes = new ArrayList<>();
-
+        FieldManager fieldManager = ComponentAccessor.getFieldManager();
+        CustomFieldManager customFieldManager = ComponentAccessor.getCustomFieldManager();
+        List<CustomField> customFields = customFieldManager.getCustomFieldObjects();
         for (Issue issue : issues) {
+
+            List<String> customValues = new ArrayList<>();
+            System.out.println(customFields);
+            /*List<String> customValues = customFields.stream()
+                    .map(customField -> {
+                        Object customValue = customField.getValue(issue);
+                        return customValue != null ? customValue.toString() : "-";
+                    }).collect(Collectors.toList());*/
+            for (CustomField customField : customFields) {
+                System.out.println("Custom Field - " + customField.getFieldName() + ", Value - " + customField.getValue(issue));
+                Object customValue = customField.getValue(issue);
+                String value = customValue != null ? customValue.toString() : "-";
+                customValues.add(value);
+                System.out.println("Current Value: " + value);
+            }
+
+
             List<ChangeItemBean> statuses = changeHistoryManager.getChangeItemsForField(issue, "status");
             long startTime;
             long endTime;
@@ -74,25 +98,24 @@ public class IssueCRUD extends HttpServlet {
             int size = statuses.size();
             if (statuses.isEmpty()) {
                 timeInCurrentStatus = Calendar.getInstance().getTimeInMillis() - issue.getCreated().getTime();
-                issueWithTimes.add(new IssueWithTime(issue, -1, timeInCurrentStatus));
+                issueWithTimes.add(new IssueWithTime(issue, customValues, -1, timeInCurrentStatus));
             } else if (size == 1) {
                 endTime = statuses.get(size - 1).getCreated().getTime();
                 startTime = issue.getCreated().getTime();
                 timeInPreviousStatus = endTime - startTime;
                 timeInCurrentStatus = Calendar.getInstance().getTimeInMillis() - endTime;
-                issueWithTimes.add(new IssueWithTime(issue, timeInPreviousStatus, timeInCurrentStatus));
+                issueWithTimes.add(new IssueWithTime(issue, customValues, timeInPreviousStatus, timeInCurrentStatus));
             } else {
                 startTime = statuses.get(size - 2).getCreated().getTime();
                 endTime = statuses.get(size - 1).getCreated().getTime();
                 timeInPreviousStatus = endTime - startTime;
                 timeInCurrentStatus = Calendar.getInstance().getTimeInMillis() - endTime;
 
-                issueWithTimes.add(new IssueWithTime(issue, timeInPreviousStatus, timeInCurrentStatus));
+                issueWithTimes.add(new IssueWithTime(issue, customValues, timeInPreviousStatus, timeInCurrentStatus));
             }
         }
 
         Map<String, Object> context = new HashMap<>();
-        System.out.println("Project Name - " + statusReportManager.getProjectName());
 
         context.put("issues", issues);
 
