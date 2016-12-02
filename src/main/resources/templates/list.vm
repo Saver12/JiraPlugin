@@ -82,8 +82,12 @@
                             #end
                             #if ($issueFields.contains("Assignee"))
                                 <td>
-##                                    #set ($assignee = $velocityCount - 1)
-                                    $issue.getIssue().getAssignee()
+                                    #set ($assignee = $issue.getIssue().getAssignee())
+                                    #if($assignee)
+                                        $assignee
+                                    #else
+                                        -
+                                    #end
                                 </td>
                             #end
                             #foreach( $field in $customFields )

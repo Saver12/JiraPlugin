@@ -74,9 +74,9 @@ public class IssueCRUD extends HttpServlet {
         List<CustomField> customFields = customFieldManager.getCustomFieldObjects();
 
         for (Issue issue : issues) {
-//            System.out.println(issue.getAssignee());
+            System.out.println(issue.getAssignee());
             List<String> customValues = new ArrayList<>();
-            System.out.println(customFields);
+//            System.out.println(customFields);
             /*List<String> customValues = customFields.stream()
                     .map(customField -> {
                         Object customValue = customField.getValue(issue);
