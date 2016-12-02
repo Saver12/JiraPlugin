@@ -1,12 +1,10 @@
 package com.epam.plugins.servlet;
 
 import com.atlassian.jira.bc.issue.search.SearchService;
-import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.changehistory.ChangeHistoryManager;
 import com.atlassian.jira.issue.fields.CustomField;
-import com.atlassian.jira.issue.fields.FieldManager;
 import com.atlassian.jira.issue.history.ChangeItemBean;
 import com.atlassian.jira.issue.search.SearchException;
 import com.atlassian.jira.jql.builder.JqlClauseBuilder;
@@ -20,7 +18,6 @@ import com.atlassian.templaterenderer.TemplateRenderer;
 import com.epam.plugins.IssueWithTime;
 import com.epam.plugins.manager.StatusReportManager;
 import com.google.common.collect.Sets;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -29,7 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Scanned
 public class IssueCRUD extends HttpServlet {
@@ -43,11 +39,14 @@ public class IssueCRUD extends HttpServlet {
     @ComponentImport
     private TemplateRenderer templateRenderer;
 
-    @Autowired
+//    @Autowired
     private StatusReportManager statusReportManager;
 
     @ComponentImport
     private ChangeHistoryManager changeHistoryManager;
+
+    @ComponentImport
+    private CustomFieldManager customFieldManager;
 
     private static final String LIST_BROWSER_TEMPLATE = "/templates/list.vm";
 
@@ -56,12 +55,14 @@ public class IssueCRUD extends HttpServlet {
                      JiraAuthenticationContext jiraAuthenticationContext,
                      TemplateRenderer templateRenderer,
                      StatusReportManager statusReportManager,
-                     ChangeHistoryManager changeHistoryManager) {
+                     ChangeHistoryManager changeHistoryManager,
+                     CustomFieldManager customFieldManager) {
         this.searchService = searchService;
         this.jiraAuthenticationContext = jiraAuthenticationContext;
         this.templateRenderer = templateRenderer;
         this.changeHistoryManager = changeHistoryManager;
         this.statusReportManager = statusReportManager;
+        this.customFieldManager = customFieldManager;
     }
 
     @Override
@@ -69,11 +70,11 @@ public class IssueCRUD extends HttpServlet {
 
         List<Issue> issues = getIssues();
         List<IssueWithTime> issueWithTimes = new ArrayList<>();
-        FieldManager fieldManager = ComponentAccessor.getFieldManager();
-        CustomFieldManager customFieldManager = ComponentAccessor.getCustomFieldManager();
-        List<CustomField> customFields = customFieldManager.getCustomFieldObjects();
-        for (Issue issue : issues) {
 
+        List<CustomField> customFields = customFieldManager.getCustomFieldObjects();
+
+        for (Issue issue : issues) {
+//            System.out.println(issue.getAssignee());
             List<String> customValues = new ArrayList<>();
             System.out.println(customFields);
             /*List<String> customValues = customFields.stream()
@@ -82,11 +83,11 @@ public class IssueCRUD extends HttpServlet {
                         return customValue != null ? customValue.toString() : "-";
                     }).collect(Collectors.toList());*/
             for (CustomField customField : customFields) {
-                System.out.println("Custom Field - " + customField.getFieldName() + ", Value - " + customField.getValue(issue));
+//                System.out.println("Custom Field - " + customField.getFieldName() + ", Value - " + customField.getValue(issue));
                 Object customValue = customField.getValue(issue);
                 String value = customValue != null ? customValue.toString() : "-";
                 customValues.add(value);
-                System.out.println("Current Value: " + value);
+//                System.out.println("Current Value: " + value);
             }
 
 
@@ -117,9 +118,11 @@ public class IssueCRUD extends HttpServlet {
 
         Map<String, Object> context = new HashMap<>();
 
-        context.put("issues", issues);
+//        context.put("issues", issues);
+        context.put("customFields", customFieldManager.getCustomFieldObjects());
 
         List<String> issueFields = statusReportManager.getIssueFields();
+//        System.out.println(issueFields);
 
         context.put("issueFields", Sets.newHashSet(issueFields));
         context.put("issues", issueWithTimes);

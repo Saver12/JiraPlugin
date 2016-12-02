@@ -1,6 +1,6 @@
 <html xmlns="http://www.w3.org/1999/html">
 <head>
-    <title>PPTX Template Builder Settings</title>
+    <title>Status Time Report Settings</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <meta http-equiv="pragma" content="no-cache"/>
     <meta http-equiv="expires" content="-1"/>
@@ -24,6 +24,10 @@
             <input type="checkbox" name="fields" value="Description">Description<br>
             <input type="checkbox" name="fields" value="Status">Status<br>
             <input type="checkbox" name="fields" value="Reporter">Reporter<br>
+            <input type="checkbox" name="fields" value="Assignee">Assignee<br>
+            #foreach($field in $customFields)
+                <input type="checkbox" name="fields" value="$!{field.getFieldName()}">$!{field}<br>
+            #end
         </div>
         <div class="buttons-container">
             <div class="buttons">

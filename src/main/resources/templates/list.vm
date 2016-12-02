@@ -40,6 +40,15 @@
                         #if ($issueFields.contains("Reporter"))
                             <th>Reporter</th>
                         #end
+                        #if ($issueFields.contains("Assignee"))
+                            <th>Assignee</th>
+                        #end
+                        #foreach( $field in $customFields )
+                            #set ($name = $field.getFieldName())
+                            #if($issueFields.contains($name))
+                                <th>$name</th>
+                            #end
+                        #end
                         <th>Time in previous status</th>
                         <th>Time in current status</th>
                         <th></th>
@@ -48,8 +57,9 @@
                     <tbody>
                         #foreach( $issue in $issues )
                         <tr>
-
-                            <td><a href="/jira/browse/$issue.getIssue().getKey()">$issue.getIssue().getKey()</a></td>
+                            <td>
+                                <a href="/jira/browse/$issue.getIssue().getKey()">$issue.getIssue().getKey()</a>
+                            </td>
                             #if ($issueFields.contains("Summary"))
                                 <td>$issue.getIssue().getSummary()</td>
                             #end
@@ -70,6 +80,25 @@
                                     $issue.getIssue().getReporter().getName()
                                 </td>
                             #end
+                            #if ($issueFields.contains("Assignee"))
+                                <td>
+##                                    #set ($assignee = $velocityCount - 1)
+                                    $issue.getIssue().getAssignee()
+                                </td>
+                            #end
+                            #foreach( $field in $customFields )
+                                #set ($index = $velocityCount - 1)
+                                #set ($name = $field.getFieldName())
+                                #set ($values = $issue.getCustomFieldsValues())
+                                #if($issueFields.contains($name))
+                                    <td>$values.get($index)</td>
+                                #end
+                            #end
+                        #*#foreach( $value in $issue.getCustomFieldsValues())
+                            #set ( $index = $velocityCount - 1 )
+                            $index
+                            <td>$value - $index</td>
+                        #end*#
                             <td>
                                 $issue.getTimeInPreviousStatus("dd' days 'HH:mm")
                             </td>
@@ -81,12 +110,6 @@
                     </tbody>
                 </table>
             </div>
-            #set ($a = $issues.get(0).getCustomFields())
-            #set ($issue = $issues.get(0))
-            $issue.getCustomFieldsValues()<br>
-##            $issues.get(0).getIssue()
-##           Field Name - $a.get(0).getFieldName(), Value - $a.get(0).getValue($issues.get(0).getIssue())
-           Field Name - $a.get(0).getFieldName(), Value - $a.get(0).getValue($issue)
         #end
     </div>
 </div>

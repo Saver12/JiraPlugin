@@ -1,16 +1,22 @@
 package com.epam.plugins.action;
 
+import com.atlassian.jira.issue.CustomFieldManager;
+import com.atlassian.jira.issue.fields.CustomField;
 import com.epam.plugins.manager.StatusReportManager;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.List;
 
 public class TimeReportWebActionSupport extends DefaultSupport {
 
     private static final String PROJECT_PARAM_NAME = "enabledInProject";
     private static final String FIELDS_PARAM_NAME = "fields";
 
-    public TimeReportWebActionSupport(final StatusReportManager statusReportManager) {
-        super(statusReportManager);
+    public TimeReportWebActionSupport(final StatusReportManager statusReportManager,
+                                      final CustomFieldManager customFieldManager) {
+        super(statusReportManager, customFieldManager);
     }
 
     @Override
@@ -22,7 +28,7 @@ public class TimeReportWebActionSupport extends DefaultSupport {
         String projectName = null;
         String[] issueFields = getHttpRequest().getParameterValues(FIELDS_PARAM_NAME);
 
-        List<String> strings1 = issueFields != null ? Arrays.asList(issueFields) : new ArrayList<>();
+        List<String> strings = issueFields != null ? Arrays.asList(issueFields) : new ArrayList<>();
 
         Enumeration<String> parameterNames = getHttpRequest().getParameterNames();
         while (parameterNames.hasMoreElements()) {
@@ -32,12 +38,16 @@ public class TimeReportWebActionSupport extends DefaultSupport {
             }
         }
 
-        statusReportManager.updateTemplateBuilderSettings(projectName, strings1);
+        statusReportManager.updateTemplateBuilderSettings(projectName, strings);
 
         return SUCCESS;
     }
 
     public String getProjectName() {
         return statusReportManager.getProjectName();
+    }
+
+    public List<CustomField> getCustomFields(){
+        return customFieldManager.getCustomFieldObjects();
     }
 }
