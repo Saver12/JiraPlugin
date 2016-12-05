@@ -39,7 +39,6 @@ public class IssueCRUD extends HttpServlet {
     @ComponentImport
     private TemplateRenderer templateRenderer;
 
-//    @Autowired
     private StatusReportManager statusReportManager;
 
     @ComponentImport
@@ -74,22 +73,17 @@ public class IssueCRUD extends HttpServlet {
         List<CustomField> customFields = customFieldManager.getCustomFieldObjects();
 
         for (Issue issue : issues) {
-            System.out.println(issue.getAssignee());
             List<String> customValues = new ArrayList<>();
-//            System.out.println(customFields);
             /*List<String> customValues = customFields.stream()
                     .map(customField -> {
                         Object customValue = customField.getValue(issue);
                         return customValue != null ? customValue.toString() : "-";
                     }).collect(Collectors.toList());*/
             for (CustomField customField : customFields) {
-//                System.out.println("Custom Field - " + customField.getFieldName() + ", Value - " + customField.getValue(issue));
                 Object customValue = customField.getValue(issue);
                 String value = customValue != null ? customValue.toString() : "-";
                 customValues.add(value);
-//                System.out.println("Current Value: " + value);
             }
-
 
             List<ChangeItemBean> statuses = changeHistoryManager.getChangeItemsForField(issue, "status");
             long startTime;
@@ -118,11 +112,9 @@ public class IssueCRUD extends HttpServlet {
 
         Map<String, Object> context = new HashMap<>();
 
-//        context.put("issues", issues);
         context.put("customFields", customFieldManager.getCustomFieldObjects());
 
         List<String> issueFields = statusReportManager.getIssueFields();
-//        System.out.println(issueFields);
 
         context.put("issueFields", Sets.newHashSet(issueFields));
         context.put("issues", issueWithTimes);

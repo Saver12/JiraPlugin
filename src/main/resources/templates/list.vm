@@ -82,9 +82,9 @@
                             #end
                             #if ($issueFields.contains("Assignee"))
                                 <td>
-                                    #set ($assignee = $issue.getIssue().getAssignee())
-                                    #if($assignee)
-                                        $assignee
+##                                    #set ($assignee = $issue.getIssue().getAssignee())
+                                    #if($issue.getIssue().getAssignee())
+                                        $issue.getIssue().getAssignee()
                                     #else
                                         -
                                     #end
@@ -92,17 +92,10 @@
                             #end
                             #foreach( $field in $customFields )
                                 #set ($index = $velocityCount - 1)
-                                #set ($name = $field.getFieldName())
-                                #set ($values = $issue.getCustomFieldsValues())
-                                #if($issueFields.contains($name))
-                                    <td>$values.get($index)</td>
+                                #if($issueFields.contains($field.getFieldName()))
+                                    <td>$issue.getCustomFieldsValues().get($index)</td>
                                 #end
                             #end
-                        #*#foreach( $value in $issue.getCustomFieldsValues())
-                            #set ( $index = $velocityCount - 1 )
-                            $index
-                            <td>$value - $index</td>
-                        #end*#
                             <td>
                                 $issue.getTimeInPreviousStatus("dd' days 'HH:mm")
                             </td>
