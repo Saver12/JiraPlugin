@@ -16,7 +16,6 @@ import com.atlassian.jira.web.bean.PagerFilter;
 import com.atlassian.jira.workflow.WorkflowManager;
 import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
-import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.epam.plugins.manager.StatusReportManager;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
@@ -29,7 +28,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.sql.Timestamp;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Path("/")
@@ -72,16 +71,14 @@ public class StatusTimeRestResource {
 
     @GET
     @Path("/getStatuses")
-    public Response getStatuses(){
+    public Response getStatuses() {
         /*List<StatusList> list = new ArrayList<>();
         list.add(new StatusList(Arrays.asList("One", "Two", "Three")));
         list.add(new StatusList(Arrays.asList("Four", "Five", "Six")));*/
-
         List<Status> statusObjects = workflowManager.getWorkflow(10000L, "10000").getLinkedStatusObjects();
         List<String> list = new ArrayList<>();
         for (Status statusObject : statusObjects) {
             list.add(statusObject.getName());
-
         }
 
         return Response.ok(new StatusList(list)).build();
@@ -89,7 +86,7 @@ public class StatusTimeRestResource {
 
     @GET
     @Path("/getResults")
-    public Response getResults(){
+    public Response getResults() {
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
@@ -104,14 +101,15 @@ public class StatusTimeRestResource {
 
             Map<String, Object> values = new HashMap<>();
 
-            values.put(issue.getStatus().getName(), issue.getCreated());
+            values.put(issue.getStatus().getName(), new Date(issue.getCreated().getTime()).toString());
 
             for (ChangeItemBean status : statuses) {
-                values.put(status.getToString(), status.getCreated());
+                values.put(status.getToString(), new Date(status.getCreated().getTime()).toString());
             }
 
 //            Map<String, Object> values = new HashMap<>();
-            values.put("Assignee", issue.getAssignee().toString());
+            ApplicationUser assignee = issue.getAssignee();
+            values.put("Assignee", assignee == null ? null : assignee.toString());
             values.put("Description", issue.getDescription());
             values.put("Reporter", issue.getReporter().getName());
             values.put("Summary", issue.getSummary());
@@ -119,7 +117,7 @@ public class StatusTimeRestResource {
 
             for (CustomField customField : customFields) {
                 Object value = customField.getValue(issue);
-                values.put(customField.getFieldName(), value == null ? "Null" : value.toString());
+                values.put(customField.getFieldName(), value == null ? null : value.toString());
             }
 
             jsons.add(new ValuesMap(issue.getKey(), values));
@@ -147,7 +145,7 @@ public class StatusTimeRestResource {
     }
 
     @XmlRootElement
-    public static class ValuesMap{
+    public static class ValuesMap {
 
         @XmlElement
         String issueKey;
