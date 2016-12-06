@@ -101,7 +101,9 @@ public class StatusTimeRestResource {
 
             Map<String, Object> values = new HashMap<>();
 
-            values.put(issue.getStatus().getName(), new Date(issue.getCreated().getTime()).toString());
+            String firstStatus = workflowManager.getWorkflow(issue).getLinkedStatusObjects().get(0).getName();
+
+            values.put(firstStatus, new Date(issue.getCreated().getTime()).toString());
 
             for (ChangeItemBean status : statuses) {
                 values.put(status.getToString(), new Date(status.getCreated().getTime()).toString());
