@@ -3,6 +3,8 @@ package com.epam.plugins.rest;
 import com.atlassian.jira.bc.issue.search.SearchService;
 import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.issue.Issue;
+import com.atlassian.jira.issue.changehistory.ChangeHistoryManager;
+import com.atlassian.jira.issue.history.ChangeItemBean;
 import com.atlassian.jira.issue.search.SearchException;
 import com.atlassian.jira.issue.status.Status;
 import com.atlassian.jira.jql.builder.JqlClauseBuilder;
@@ -24,10 +26,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.sql.Timestamp;
+import java.util.*;
 
 @Path("/")
 //@AnonymousAllowed
@@ -49,17 +49,22 @@ public class StatusTimeRestResource {
     @ComponentImport
     private CustomFieldManager customFieldManager;
 
+    @ComponentImport
+    private ChangeHistoryManager changeHistoryManager;
+
     @Inject
     public StatusTimeRestResource(final WorkflowManager workflowManager,
                                   final JiraAuthenticationContext jiraAuthenticationContext,
                                   final SearchService searchService,
                                   final StatusReportManager statusReportManager,
-                                  final CustomFieldManager customFieldManager) {
+                                  final CustomFieldManager customFieldManager,
+                                  final ChangeHistoryManager changeHistoryManager) {
         this.workflowManager = workflowManager;
         this.jiraAuthenticationContext = jiraAuthenticationContext;
         this.searchService = searchService;
         this.statusReportManager = statusReportManager;
         this.customFieldManager = customFieldManager;
+        this.changeHistoryManager = changeHistoryManager;
     }
 
     @GET
@@ -84,6 +89,20 @@ public class StatusTimeRestResource {
     public Response getResults(){
 
         List<Issue> issues = getIssues();
+
+        for (Issue issue : issues) {
+
+            List<ChangeItemBean> statuses = changeHistoryManager.getChangeItemsForField(issue, "status");
+
+            Map<String, Timestamp> map = new HashMap<>();
+
+            map.put(issue.getStatus().getName(), issue.getCreated());
+
+            for (ChangeItemBean status : statuses) {
+                map.put(status.getToString(), status.getCreated());
+            }
+        }
+
 
 
         return null;
