@@ -4,6 +4,7 @@ import com.atlassian.jira.bc.issue.search.SearchService;
 import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.changehistory.ChangeHistoryManager;
+import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.history.ChangeItemBean;
 import com.atlassian.jira.issue.search.SearchException;
 import com.atlassian.jira.issue.status.Status;
@@ -17,6 +18,8 @@ import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.epam.plugins.manager.StatusReportManager;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -88,24 +91,40 @@ public class StatusTimeRestResource {
     @Path("/getResults")
     public Response getResults(){
 
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
+
         List<Issue> issues = getIssues();
+
+        List<ValuesMap> jsons = new ArrayList<>();
 
         for (Issue issue : issues) {
 
             List<ChangeItemBean> statuses = changeHistoryManager.getChangeItemsForField(issue, "status");
 
-            Map<String, Timestamp> map = new HashMap<>();
+            Map<String, Object> values = new HashMap<>();
 
-            map.put(issue.getStatus().getName(), issue.getCreated());
+            values.put(issue.getStatus().getName(), issue.getCreated());
 
             for (ChangeItemBean status : statuses) {
-                map.put(status.getToString(), status.getCreated());
+                values.put(status.getToString(), status.getCreated());
             }
+
+//            Map<String, Object> values = new HashMap<>();
+            values.put("Assignee", issue.getAssignee().toString());
+            values.put("Description", issue.getDescription());
+            values.put("Reporter", issue.getReporter().getName());
+            values.put("Summary", issue.getSummary());
+            List<CustomField> customFields = customFieldManager.getCustomFieldObjects();
+
+            for (CustomField customField : customFields) {
+                Object value = customField.getValue(issue);
+                values.put(customField.getFieldName(), value == null ? "Null" : value.toString());
+            }
+
+            jsons.add(new ValuesMap(issue.getKey(), values));
         }
-
-
-
-        return null;
+        return Response.ok(jsons).build();
     }
 
     @XmlRootElement
@@ -143,6 +162,14 @@ public class StatusTimeRestResource {
         public ValuesMap(String issueKey, Map<String, Object> values) {
             this.issueKey = issueKey;
             this.values = values;
+        }
+
+        public String getIssueKey() {
+            return issueKey;
+        }
+
+        public Map<String, Object> getValues() {
+            return values;
         }
     }
 
