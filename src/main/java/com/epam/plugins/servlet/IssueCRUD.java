@@ -121,6 +121,13 @@ public class IssueCRUD extends HttpServlet {
         resp.setContentType("text/html;charset=utf-8");
 
         templateRenderer.render(LIST_BROWSER_TEMPLATE, context, resp.getWriter());
+/*
+        WorkflowManager workflowManager = ComponentAccessor.getWorkflowManager();
+        List<Status> statusObjects =  workflowManager.getWorkflow(10000L, "10000").getLinkedStatusObjects();
+//        workflowManager.getWorkflow(10000L, "10000");
+        for (Status statusObject : statusObjects) {
+            System.out.println(statusObject.getName());
+        }*/
     }
 
     private ApplicationUser getCurrentUser() {
