@@ -67,6 +67,8 @@
                                 <td>
                                     #if($issue.getIssue().getDescription())
                                         $issue.getIssue().getDescription()
+                                    #else
+                                        -
                                     #end
                                 </td>
                             #end

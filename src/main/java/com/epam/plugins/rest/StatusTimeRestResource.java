@@ -17,8 +17,7 @@ import com.atlassian.jira.workflow.WorkflowManager;
 import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.epam.plugins.manager.StatusReportManager;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
+import com.google.common.collect.Sets;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -28,11 +27,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Path("/")
-//@AnonymousAllowed
 @Produces({MediaType.APPLICATION_JSON})
 @Scanned
 public class StatusTimeRestResource {
@@ -72,24 +69,17 @@ public class StatusTimeRestResource {
     @GET
     @Path("/getStatuses")
     public Response getStatuses() {
-        /*List<StatusList> list = new ArrayList<>();
-        list.add(new StatusList(Arrays.asList("One", "Two", "Three")));
-        list.add(new StatusList(Arrays.asList("Four", "Five", "Six")));*/
         List<Status> statusObjects = workflowManager.getWorkflow(10000L, "10000").getLinkedStatusObjects();
         List<String> list = new ArrayList<>();
         for (Status statusObject : statusObjects) {
             list.add(statusObject.getName());
         }
-
         return Response.ok(new StatusList(list)).build();
     }
 
     @GET
     @Path("/getResults")
     public Response getResults() {
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
 
         List<Issue> issues = getIssues();
 
@@ -101,26 +91,11 @@ public class StatusTimeRestResource {
 
             Map<String, Object> values = new HashMap<>();
 
-            String firstStatus = workflowManager.getWorkflow(issue).getLinkedStatusObjects().get(0).getName();
+            fillStatuses(values, statuses, issue);
 
-            values.put(firstStatus, new Date(issue.getCreated().getTime()).toString());
+            List<String> issueFields = statusReportManager.getIssueFields();
 
-            for (ChangeItemBean status : statuses) {
-                values.put(status.getToString(), new Date(status.getCreated().getTime()).toString());
-            }
-
-//            Map<String, Object> values = new HashMap<>();
-            ApplicationUser assignee = issue.getAssignee();
-            values.put("Assignee", assignee == null ? null : assignee.toString());
-            values.put("Description", issue.getDescription());
-            values.put("Reporter", issue.getReporter().getName());
-            values.put("Summary", issue.getSummary());
-            List<CustomField> customFields = customFieldManager.getCustomFieldObjects();
-
-            for (CustomField customField : customFields) {
-                Object value = customField.getValue(issue);
-                values.put(customField.getFieldName(), value == null ? null : value.toString());
-            }
+            fillValuesMap(values, issueFields, issue);
 
             jsons.add(new ValuesMap(issue.getKey(), values));
         }
@@ -159,17 +134,9 @@ public class StatusTimeRestResource {
         private ValuesMap() {
         }
 
-        public ValuesMap(String issueKey, Map<String, Object> values) {
+        ValuesMap(String issueKey, Map<String, Object> values) {
             this.issueKey = issueKey;
             this.values = values;
-        }
-
-        public String getIssueKey() {
-            return issueKey;
-        }
-
-        public Map<String, Object> getValues() {
-            return values;
         }
     }
 
@@ -189,5 +156,49 @@ public class StatusTimeRestResource {
             e.printStackTrace();
         }
         return searchResults.getIssues();
+    }
+
+    private void fillValuesMap(Map<String, Object> values, List<String> issueFields, Issue issue) {
+
+        HashSet<String> currentFields = Sets.newHashSet(issueFields);
+
+        if (currentFields.contains("Assignee")) {
+            ApplicationUser assignee = issue.getAssignee();
+            values.put("Assignee", assignee == null ? null : assignee.toString());
+        }
+        if (currentFields.contains("Description")) {
+            values.put("Description", issue.getDescription());
+        }
+        if (currentFields.contains("Reporter")) {
+            values.put("Reporter", issue.getReporter().getName());
+        }
+        if (currentFields.contains("Summary")) {
+            values.put("Summary", issue.getSummary());
+        }
+
+        List<CustomField> customFields = customFieldManager.getCustomFieldObjects();
+
+        for (CustomField customField : customFields) {
+            Object value = customField.getValue(issue);
+            values.put(customField.getFieldName(), value == null ? null : value.toString());
+        }
+    }
+
+    private void fillStatuses(Map<String, Object> values, List<ChangeItemBean> statuses, Issue issue) {
+
+        List<Status> statusObjects = workflowManager.getWorkflow(issue).getLinkedStatusObjects();
+
+        String firstStatus = statusObjects.get(0).getName();
+
+        values.put(firstStatus, new Date(issue.getCreated().getTime()).toString());
+
+        for (int i = 1; i < statusObjects.size(); i++) {
+            String currentStatusname = statusObjects.get(i).getName();
+            values.put(currentStatusname, null);
+        }
+
+        for (ChangeItemBean status : statuses) {
+            values.put(status.getToString(), new Date(status.getCreated().getTime()).toString());
+        }
     }
 }
